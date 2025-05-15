@@ -1,0 +1,128 @@
+{
+  "wolf": {
+    "weight": 50,
+    "maxQuantity": 30,
+    "maxSteps": 3,
+    "saturation": 8,
+    "icon": "\uD83D\uDC3A",
+    "imageIcon": "/kazakov/emojis/carnivore/wolf.png"
+  },
+  "boa": {
+    "weight": 15,
+    "maxQuantity": 30,
+    "maxSteps": 1,
+    "saturation": 3,
+    "icon": "\uD83D\uDC0D",
+    "imageIcon": "/kazakov/emojis/carnivore/boa.png"
+  },
+  "fox": {
+    "weight": 8,
+    "maxQuantity": 30,
+    "maxSteps": 2,
+    "saturation": 2,
+    "icon": "\uD83E\uDD8A",
+    "imageIcon": "/kazakov/emojis/carnivore/fox.png"
+  },
+  "bear": {
+    "weight": 500,
+    "maxQuantity": 5,
+    "maxSteps": 2,
+    "saturation": 80,
+    "icon": "\uD83D\uDC3B",
+    "imageIcon": "/kazakov/emojis/carnivore/bear.png"
+  },
+  "eagle": {
+    "weight": 6,
+    "maxQuantity": 20,
+    "maxSteps": 3,
+    "saturation": 1,
+    "icon": "\uD83E\uDD85",
+    "imageIcon": "/kazakov/emojis/carnivore/eagle.png"
+  },
+  "horse": {
+    "weight": 400,
+    "maxQuantity": 20,
+    "maxSteps": 4,
+    "saturation": 60,
+    "icon": "\uD83D\uDC0E",
+    "imageIcon": "/kazakov/emojis/herbivore/horse.png"
+  },
+  "deer": {
+    "weight": 300,
+    "maxQuantity": 20,
+    "maxSteps": 4,
+    "saturation": 50,
+    "icon": "\uD83E\uDD8C",
+    "imageIcon": "/kazakov/emojis/herbivore/deer.png"
+  },
+  "rabbit": {
+    "weight": 2,
+    "maxQuantity": 150,
+    "maxSteps": 2,
+    "saturation": 0.45,
+    "icon": "\uD83D\uDC07",
+    "imageIcon": "/kazakov/emojis/herbivore/rabbit.png"
+  },
+  "mouse": {
+    "weight": 0.05,
+    "maxQuantity": 500,
+    "maxSteps": 1,
+    "saturation": 0.01,
+    "icon": "\uD83D\uDC01",
+    "imageIcon": "/kazakov/emojis/herbivore/mouse.png"
+  },
+  "goat": {
+    "weight": 60,
+    "maxQuantity": 140,
+    "maxSteps": 3,
+    "saturation": 10,
+    "icon": "\uD83D\uDC10",
+    "imageIcon": "/kazakov/emojis/herbivore/goat.png"
+  },
+  "sheep": {
+    "weight": 70,
+    "maxQuantity": 140,
+    "maxSteps": 3,
+    "saturation": 15,
+    "icon": "\uD83D\uDC11",
+    "imageIcon": "/kazakov/emojis/herbivore/sheep.png"
+  },
+  "boar": {
+    "weight": 400,
+    "maxQuantity": 50,
+    "maxSteps": 2,
+    "saturation": 50,
+    "icon": "\uD83D\uDC17",
+    "imageIcon": "/kazakov/emojis/herbivore/boar.png"
+  },
+  "buffalo": {
+    "weight": 700,
+    "maxQuantity": 10,
+    "maxSteps": 3,
+    "saturation": 100,
+    "icon": "\uD83D\uDC03",
+    "imageIcon": "/kazakov/emojis/herbivore/buffalo.png"
+  },
+  "duck": {
+    "weight": 1,
+    "maxQuantity": 200,
+    "maxSteps": 4,
+    "saturation": 0.15,
+    "icon": "\uD83E\uDD86",
+    "imageIcon": "/kazakov/emojis/herbivore/duck.png"
+  },
+  "caterpillar": {
+    "weight": 0.01,
+    "maxQuantity": 1000,
+    "maxSteps": 0,
+    "saturation": 0,
+    "icon": "\uD83D\uDC1B",
+    "imageIcon": "/kazakov/emojis/herbivore/caterpillar.png"
+  },
+  "plant": {
+    "weight": 1,
+    "maxQuantity": 200,
+    "icon": "\uD83C\uDF3E",
+    "imageIcon": "/kazakov/emojis/plant/plant.png"
+  }
+}

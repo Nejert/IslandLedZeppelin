@@ -1,5 +1,6 @@
 package com.javarush.island.kazakov.entity.misc;
 
+import com.javarush.island.kazakov.IslandException;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
 import com.javarush.island.kazakov.entity.carnivore.*;
 import com.javarush.island.kazakov.entity.herbivore.*;
@@ -29,5 +30,14 @@ public enum EntityType {
 
     EntityType(Class<? extends Entity> clazz) {
         this.clazz = clazz;
+    }
+
+    public static EntityType valueOf(Class<? extends Entity> clazz) {
+        for (EntityType entityType : EntityType.values()) {
+            if (clazz == entityType.clazz) {
+                return entityType;
+            }
+        }
+        throw new IslandException(new IllegalArgumentException("No EntityType found for " + clazz));
     }
 }

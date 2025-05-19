@@ -17,6 +17,8 @@ public abstract class Entity implements Cloneable {
     private boolean hungry;
     @Setter
     private boolean dead;
+    @Setter
+    private boolean parent;
 
     protected Entity(double weight, int maxQuantity) {
         this.weight = weight;

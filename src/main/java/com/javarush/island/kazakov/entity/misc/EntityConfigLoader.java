@@ -15,8 +15,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
-public class ConfigLoader {
-    private ConfigLoader() {
+public class EntityConfigLoader {
+    private EntityConfigLoader() {
     }
 
     public static Map<EntityType, Entity> loadPrototypes(String path) {
@@ -24,7 +24,7 @@ public class ConfigLoader {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = null;
         try {
-            jsonNode = objectMapper.readTree(ConfigLoader.class.getResource(path));
+            jsonNode = objectMapper.readTree(EntityConfigLoader.class.getResource(path));
         } catch (IOException e) {
             throw new IslandException("Unable to read entities config ", e);
         }

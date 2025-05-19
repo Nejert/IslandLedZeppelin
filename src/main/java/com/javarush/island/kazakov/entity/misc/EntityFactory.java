@@ -8,7 +8,7 @@ public class EntityFactory {
     private static final Map<EntityType, Entity> entities;
 
     static {
-        entities = ConfigLoader.loadPrototypes("/kazakov/entityConfig.json");
+        entities = EntityConfigLoader.loadPrototypes("/kazakov/entityConfig.json");
     }
 
     public static Entity newEntity(EntityType entityType) {

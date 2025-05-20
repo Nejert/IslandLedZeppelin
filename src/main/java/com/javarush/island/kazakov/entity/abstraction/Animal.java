@@ -1,22 +1,19 @@
 package com.javarush.island.kazakov.entity.abstraction;
 
-import com.javarush.island.kazakov.TempRnd;
 import com.javarush.island.kazakov.component.Eating;
 import com.javarush.island.kazakov.component.Movable;
 import com.javarush.island.kazakov.component.Reproducible;
 import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.entity.misc.EatingProbability;
-import com.javarush.island.kazakov.entity.misc.EntityFactory;
 import com.javarush.island.kazakov.entity.misc.EntityType;
 import com.javarush.island.kazakov.map.Cell;
 import com.javarush.island.kazakov.util.Direction;
 import com.javarush.island.kazakov.util.Location;
+import com.javarush.island.kazakov.util.Rnd;
 import lombok.Getter;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 
 @Getter
@@ -26,8 +23,6 @@ public abstract class Animal extends Entity implements Movable, Eating, Reproduc
     private final double saturationDecreaseFactor;
     private final double quarterOfSaturation;
     private double currentSaturation;
-    private ThreadLocalRandom rd = ThreadLocalRandom.current();
-//    private Random rd = TempRnd.get();
 
     protected Animal(double weight, int maxQuantity, int maxSteps, double saturation) {
         super(weight, maxQuantity);
@@ -99,7 +94,10 @@ public abstract class Animal extends Entity implements Movable, Eating, Reproduc
             for (int i = 0; i < value.size(); ) {
                 Entity entity = value.get(i);
                 int probability = EatingProbability.getProbability(this, entity);
-                if (rd.nextInt(100) <= probability) {
+                if (entity.getClass() == EntityType.PLANT.getClazz()){
+                    int k = 0;
+                }
+                if (Rnd.get(probability)) {
                     this.setCurrentSaturation(this.getCurrentSaturation() + entity.getWeight());
                     origin.remove(entity);
                 } else {
@@ -111,13 +109,13 @@ public abstract class Animal extends Entity implements Movable, Eating, Reproduc
 
     @Override
     public void move(Cell origin, Cell[][] cells) {
-        int steps = rd.nextInt(this.getMaxSteps() + 1); // (0,maxSteps) may chose not to move
+        int steps = Rnd.random(this.getMaxSteps() + 1); // (0,maxSteps) may chose not to move
         Location startLoc = origin.getLocation();
         Location newLoc = startLoc;
         for (int i = 0; i < steps; i++) {
             boolean isLocationChosen = false;
             while (!isLocationChosen) {
-                int directionIndex = rd.nextInt(Direction.values().length);
+                int directionIndex = Rnd.random(Direction.values().length);
                 Direction direction = Direction.values()[directionIndex];
                 newLoc = choseNewLocation(direction, newLoc);
                 isLocationChosen = newLoc != startLoc;

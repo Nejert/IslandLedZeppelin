@@ -4,12 +4,17 @@ import com.javarush.island.kazakov.component.Eating;
 import com.javarush.island.kazakov.component.Movable;
 import com.javarush.island.kazakov.component.Reproducible;
 import com.javarush.island.kazakov.config.Default;
+import com.javarush.island.kazakov.config.SpawnProbability;
 import com.javarush.island.kazakov.entity.abstraction.Animal;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
 import com.javarush.island.kazakov.entity.misc.EntityFactory;
 import com.javarush.island.kazakov.entity.misc.EntityType;
 import com.javarush.island.kazakov.map.Cell;
+import com.javarush.island.kazakov.map.GameMap;
+import com.javarush.island.kazakov.map.Spawner;
+import com.javarush.island.kazakov.system.DisplaySystem;
 import com.javarush.island.kazakov.util.Location;
+import com.javarush.island.kazakov.util.Rnd;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,46 +26,25 @@ public class Application {
     private static boolean running = true;
 
     public static void main(String[] args) {
-        Cell[][] cells = new Cell[Default.ROWS][Default.COLS];
-        //init
-        for (int y = 0; y < Default.ROWS; y++) {
-            for (int x = 0; x < Default.COLS; x++) {
-                cells[y][x] = new Cell(new Location(x, y));
-            }
-        }
+        GameMap gameMap = new GameMap(Default.ROWS, Default.COLS);
+        Spawner spawner = new Spawner(gameMap);
+        spawner.initialRandomSpawn();
+        DisplaySystem displaySystem = new DisplaySystem(gameMap);
+
         //add entity
-        cells[0][0].add(EntityFactory.newEntity(EntityType.WOLF));
-        cells[1][1].add(EntityFactory.newEntity(EntityType.RABBIT));
-        cells[0][0].add(EntityFactory.newEntity(EntityType.WOLF));
-        cells[1][1].add(EntityFactory.newEntity(EntityType.RABBIT));
-        cells[0][0].add(EntityFactory.newEntity(EntityType.WOLF));
-        cells[1][1].add(EntityFactory.newEntity(EntityType.RABBIT));
-
-        cells[3][0].add(EntityFactory.newEntity(EntityType.WOLF));
-        cells[4][1].add(EntityFactory.newEntity(EntityType.RABBIT));
-        cells[5][2].add(EntityFactory.newEntity(EntityType.WOLF));
-        cells[6][3].add(EntityFactory.newEntity(EntityType.RABBIT));
-        cells[4][4].add(EntityFactory.newEntity(EntityType.WOLF));
-        cells[9][5].add(EntityFactory.newEntity(EntityType.RABBIT));
-
-        cells[0][0].add(EntityFactory.newEntity(EntityType.WOLF));
-        cells[1][1].add(EntityFactory.newEntity(EntityType.RABBIT));
-        cells[0][0].add(EntityFactory.newEntity(EntityType.WOLF));
-        cells[1][1].add(EntityFactory.newEntity(EntityType.RABBIT));
-        cells[0][0].add(EntityFactory.newEntity(EntityType.WOLF));
-        cells[1][1].add(EntityFactory.newEntity(EntityType.RABBIT));
-
-        cells[3][0].add(EntityFactory.newEntity(EntityType.WOLF));
-        cells[4][1].add(EntityFactory.newEntity(EntityType.RABBIT));
-        cells[5][2].add(EntityFactory.newEntity(EntityType.WOLF));
-        cells[6][3].add(EntityFactory.newEntity(EntityType.RABBIT));
-        cells[4][4].add(EntityFactory.newEntity(EntityType.WOLF));
-        cells[9][5].add(EntityFactory.newEntity(EntityType.RABBIT));
 
 
         ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
         ScheduledFuture<?> scheduledFuture = ses.scheduleWithFixedDelay(() -> {
-            update(cells);
+            System.out.println(displaySystem.display());
+            System.out.println(displaySystem.displayStats());
+            spawnPlants(gameMap.getCells());
+            moveAll(gameMap.getCells());
+            decreaseSaturation(gameMap.getCells());
+            eatAll(gameMap.getCells());
+            killStarvingAnimals(gameMap.getCells());
+            reproduceAll(gameMap.getCells());
+            checkSimulationEnd(gameMap.getCells());
         }, 0, 1, TimeUnit.SECONDS);
 
         while (running) {
@@ -81,7 +65,7 @@ public class Application {
         }*/
     }
 
-    private static void update(Cell[][] cells) {
+    /*private static void update(GameMap gameMap) {
         display(cells);
         displayStatistic(cells);
         spawnPlants(cells);
@@ -91,7 +75,7 @@ public class Application {
         killStarvingAnimals(cells);
         reproduceAll(cells);
         checkSimulationEnd(cells);
-    }
+    }*/
 
     private static void reproduceAll(Cell[][] cells) {
         for (int y = 0; y < Default.ROWS; y++) {
@@ -112,29 +96,14 @@ public class Application {
                 }
             }
             for (Entity entity : entry.getValue()) {
-                if (entity instanceof Reproducible) {
+                if (entity instanceof Reproducible && entity.isParent()) {
+                    ((Animal)entity).decreaseSaturation();
                     entity.setParent(false);
                 }
             }
             for (int i = 0; i < offspring; i++) {
                 entry.getValue().add(EntityFactory.newEntity(EntityType.valueOf(entry.getKey())));
             }
-        }
-    }
-
-    private static void displayStatistic(Cell[][] cells) {
-        Map<Class<? extends Entity>, Integer> stat = new HashMap<>();
-        for (int y = 0; y < Default.ROWS; y++) {
-            for (int x = 0; x < Default.COLS; x++) {
-                for (Map.Entry<Class<? extends Entity>, List<Entity>> entry : cells[y][x].getVisitors().entrySet()) {
-                    if (!entry.getValue().isEmpty()) {
-                        stat.put(entry.getKey(), stat.getOrDefault(entry.getKey(), 0) + entry.getValue().size());
-                    }
-                }
-            }
-        }
-        for (Map.Entry<Class<? extends Entity>, Integer> entry : stat.entrySet()) {
-            System.out.println(entry.getKey().getSimpleName() + ":" + entry.getValue());
         }
     }
 
@@ -232,12 +201,10 @@ public class Application {
     }
 
     private static void spawnPlants(Cell[][] cells) {
-        ThreadLocalRandom random = ThreadLocalRandom.current();
-//        Random random = TempRnd.get();
         int growsProbability = 2;
         for (int y = 0; y < Default.ROWS; y++) {
             for (int x = 0; x < Default.COLS; x++) {
-                if (random.nextInt(100) < growsProbability) {
+                if (Rnd.get(growsProbability)) {
                     cells[y][x].add(EntityFactory.newEntity(EntityType.PLANT));
                 }
             }
@@ -261,17 +228,6 @@ public class Application {
                     i++;
                 }
             }
-        }
-    }
-
-    private static void display(Cell[][] cells) {
-        System.out.println();
-        for (int y = 0; y < Default.ROWS; y++) {
-            System.out.print("|");
-            for (int x = 0; x < Default.COLS; x++) {
-                System.out.print(cells[y][x] + "|");
-            }
-            System.out.println();
         }
     }
 }

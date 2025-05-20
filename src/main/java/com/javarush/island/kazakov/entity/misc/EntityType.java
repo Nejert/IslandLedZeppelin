@@ -1,5 +1,6 @@
 package com.javarush.island.kazakov.entity.misc;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.javarush.island.kazakov.IslandException;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
 import com.javarush.island.kazakov.entity.carnivore.*;
@@ -39,5 +40,10 @@ public enum EntityType {
             }
         }
         throw new IslandException(new IllegalArgumentException("No EntityType found for " + clazz));
+    }
+
+    @JsonValue
+    public String toLowerCase() {
+        return name().toLowerCase();
     }
 }

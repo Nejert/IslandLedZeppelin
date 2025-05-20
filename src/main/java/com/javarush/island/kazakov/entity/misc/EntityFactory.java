@@ -7,6 +7,9 @@ import java.util.Map;
 public class EntityFactory {
     private static final Map<EntityType, Entity> entities;
 
+    private EntityFactory() {
+    }
+
     static {
         entities = EntityConfigLoader.loadPrototypes("/kazakov/entityConfig.json");
     }

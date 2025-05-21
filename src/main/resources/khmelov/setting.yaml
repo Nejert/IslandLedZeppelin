@@ -1,14 +1,14 @@
 ---
 life:
-  period: 1000
+  period: 50
   rows: 20
   cols: 25
-  percentAnimalSlim: 3
-  percentPlantGrow: 25
+  percentAnimalSlim: 10
+  percentPlantGrow: 7
 
 console:
     showRows: 6
-    showCols: 15
+    showCols: 20
     cellCharCount: 4
 
 window:

@@ -60,88 +60,25 @@ public abstract class Animal extends Entity implements Movable, Eating, Reproduc
         }
     }
 
-    private boolean desireToBeNaughty() {
+    public boolean desireToBeNaughty() {
         return currentSaturation >= saturation - quarterOfSaturation;
     }
 
     @Override
-    public boolean reproduce(Cell origin) {
-        if (!desireToBeNaughty()) {
-            return false;
-        }
-        for (Map.Entry<Class<? extends Entity>, List<Entity>> entry : origin.getVisitors().entrySet()) {
-            for (Entity entity : entry.getValue()) {
-                if (this == entity) continue;
-                if (this.isParent()) continue;
-                if (entity instanceof Reproducible) {
-                    if (((Animal) entity).desireToBeNaughty() && !entity.isParent()) {
-                        this.setParent(true);
-                        entity.setParent(true);
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+    public void reproduce(Entity entity) {
+        this.setParent(true);
+        entity.setParent(true);
     }
 
     @Override
-    public void eat(Cell origin) {
-        if (!this.isHungry()) return;
-
-        for (Map.Entry<Class<? extends Entity>, List<Entity>> entry : origin.getVisitors().entrySet()) {
-            List<Entity> value = entry.getValue();
-            for (int i = 0; i < value.size(); ) {
-                Entity entity = value.get(i);
-                int probability = EatingProbability.getProbability(this, entity);
-                if (entity.getClass() == EntityType.PLANT.getClazz()){
-                    int k = 0;
-                }
-                if (Rnd.get(probability)) {
-                    this.setCurrentSaturation(this.getCurrentSaturation() + entity.getWeight());
-                    origin.remove(entity);
-                } else {
-                    i++;
-                }
-            }
-        }
+    public void eat(Entity pray) {
+        this.setCurrentSaturation(this.getCurrentSaturation() + pray.getWeight());
     }
 
     @Override
-    public void move(Cell origin, Cell[][] cells) {
-        int steps = Rnd.random(this.getMaxSteps() + 1); // (0,maxSteps) may chose not to move
-        Location startLoc = origin.getLocation();
-        Location newLoc = startLoc;
-        for (int i = 0; i < steps; i++) {
-            boolean isLocationChosen = false;
-            while (!isLocationChosen) {
-                int directionIndex = Rnd.random(Direction.values().length);
-                Direction direction = Direction.values()[directionIndex];
-                newLoc = choseNewLocation(direction, newLoc);
-                isLocationChosen = newLoc != startLoc;
-            }
-        }
-        traverseTo(origin, cells[newLoc.y()][newLoc.x()]);
-    }
-
-    private void traverseTo(Cell origin, Cell dest) {
+    public void move(Cell origin, Cell dest) {
         dest.add(this);
         setMoved(true);
         origin.remove(this);
-    }
-
-    private Location choseNewLocation(Direction direction, Location oldLocation) {
-        int tempX = oldLocation.x();
-        int tempY = oldLocation.y();
-        switch (direction) {
-            case UP -> tempY--;
-            case DOWN -> tempY++;
-            case LEFT -> tempX--;
-            case RIGHT -> tempX++;
-        }
-        if (tempX >= 0 && tempY >= 0 && tempX < Default.COLS && tempY < Default.ROWS) {
-            return new Location(tempX, tempY);
-        }
-        return oldLocation;
     }
 }

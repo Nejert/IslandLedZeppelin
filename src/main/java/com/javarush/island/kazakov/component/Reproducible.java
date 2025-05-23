@@ -1,7 +1,7 @@
 package com.javarush.island.kazakov.component;
 
-import com.javarush.island.kazakov.map.Cell;
+import com.javarush.island.kazakov.entity.abstraction.Entity;
 
 public interface Reproducible {
-    boolean reproduce(Cell origin);
+    void reproduce(Entity entity);
 }

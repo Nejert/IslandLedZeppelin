@@ -1,4 +1,4 @@
-package com.javarush.island.kazakov.system;
+package com.javarush.island.kazakov.view.console;
 
 import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
@@ -9,10 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DisplaySystem {
+public class ConsoleView {
     private final GameMap gameMap;
 
-    public DisplaySystem(GameMap gameMap) {
+    public ConsoleView(GameMap gameMap) {
         this.gameMap = gameMap;
     }
 

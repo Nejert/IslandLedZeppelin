@@ -77,8 +77,10 @@ public abstract class Animal extends Entity implements Movable, Eating, Reproduc
 
     @Override
     public void move(Cell origin, Cell dest) {
-        dest.add(this);
-        setMoved(true);
-        origin.remove(this);
+        synchronized (origin) {
+            dest.add(this);
+            setMoved(true);
+            origin.remove(this);
+        }
     }
 }

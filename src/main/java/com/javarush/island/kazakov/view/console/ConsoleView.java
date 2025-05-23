@@ -3,13 +3,14 @@ package com.javarush.island.kazakov.view.console;
 import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
 import com.javarush.island.kazakov.map.GameMap;
+import com.javarush.island.kazakov.view.View;
 import javafx.util.Pair;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ConsoleView {
+public class ConsoleView implements View {
     private final GameMap gameMap;
 
     public ConsoleView(GameMap gameMap) {
@@ -59,5 +60,11 @@ public class ConsoleView {
             }
         }
         return stat;
+    }
+
+    @Override
+    public void update() {
+        System.out.println(display());
+        System.out.println(displayStats());
     }
 }

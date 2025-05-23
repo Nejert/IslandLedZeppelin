@@ -9,50 +9,51 @@ import com.javarush.island.kazakov.map.Cell;
 import com.javarush.island.kazakov.map.GameMap;
 import com.javarush.island.kazakov.util.Rnd;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
-public class EatSystem {
-    private final GameMap gameMap;
+public class EatSystem extends AbstractSystem {
 
     public EatSystem(GameMap gameMap) {
-        this.gameMap = gameMap;
+        super(gameMap);
     }
 
+    @Override
     public void update() {
-        eat(this::eatAllInCell);
-        eat(this::killStarvingAnimals);
-    }
-
-    private void eat(BiConsumer<Cell, List<Entity>> action) {
+        //accept(this::eat);
         for (int y = 0; y < Default.ROWS; y++) {
             for (int x = 0; x < Default.COLS; x++) {
                 Cell cell = gameMap.getCell(y, x);
-                for (Map.Entry<Class<? extends Entity>, List<Entity>> entry : cell.getVisitors().entrySet()) {
-                    action.accept(cell, entry.getValue());
+                synchronized (cell) {
+                    eat(cell);
                 }
             }
         }
+        accept(this::killStarvingAnimals);
     }
 
-    private void eatAllInCell(Cell cell, List<Entity> cellVisitors) {
-        int size = cellVisitors.size();
+    private void eat(Cell cell) {
+        List<Entity> allEntities = new ArrayList<>();
+        for (Map.Entry<Class<? extends Entity>, List<Entity>> entry : cell.getVisitors().entrySet()) {
+            allEntities.addAll(entry.getValue());
+        }
+        int size = allEntities.size();
         for (int i = 0; i < size; ) {
-            Entity eater = cellVisitors.get(i);
+            Entity eater = allEntities.get(i);
             if (eater instanceof Eating e) {
-                Entity pray = findVictim((Animal) eater, cellVisitors);
+                Entity pray = findVictim((Animal) eater, allEntities);
                 if (pray != null) {
                     e.eat(pray);
                     cell.remove(pray);
+                    allEntities.remove(pray);
                 }
             }
-            if (cellVisitors.size() == size) {
+            if (allEntities.size() == size) {
                 i++;
             } else {
-                size = cellVisitors.size();
+                size = allEntities.size();
             }
-
         }
     }
 

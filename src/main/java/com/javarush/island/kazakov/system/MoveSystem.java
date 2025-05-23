@@ -11,48 +11,37 @@ import com.javarush.island.kazakov.util.Location;
 import com.javarush.island.kazakov.util.Rnd;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
 
-public class MoveSystem {
-    private final GameMap gameMap;
+public class MoveSystem extends AbstractSystem {
 
     public MoveSystem(GameMap gameMap) {
-        this.gameMap = gameMap;
+        super(gameMap);
     }
 
+    @Override
     public void update() {
-        move(this::moveAllInCell);
-        move(this::resetFlag);
-        move(this::decreaseSaturation);
+        accept(this::move);
+        accept(this::resetFlag);
+        accept(this::decreaseSaturation);
     }
 
-    private void move(BiConsumer<Cell, List<Entity>> action) {
-        for (int y = 0; y < Default.ROWS; y++) {
-            for (int x = 0; x < Default.COLS; x++) {
-                Cell cell = gameMap.getCell(y, x);
-                for (Map.Entry<Class<? extends Entity>, List<Entity>> entry : cell.getVisitors().entrySet()) {
-                    action.accept(cell, entry.getValue());
+    private void move(Cell cell, List<Entity> cellVisitors) {
+        for (int i = 0; i < cellVisitors.size(); ) {
+            Entity entity = cellVisitors.get(i);
+            if (entity instanceof Movable m && !entity.isMoved()) {
+                Cell newCell = findDestinationCell(cell, ((Animal) entity).getMaxSteps());
+                List<Entity> entities = newCell.get(entity.getClass());
+                if (entities == null || entities.size() < entity.getMaxQuantity()) {
+                    m.move(cell, newCell);
+                    continue;
                 }
             }
+            i++;
         }
     }
 
     private void resetFlag(Cell cell, List<Entity> cellVisitors) {
         cellVisitors.forEach(entity -> entity.setMoved(false));
-    }
-
-    private void moveAllInCell(Cell cell, List<Entity> cellVisitors) {
-        for (int i = 0; i < cellVisitors.size(); ) {
-            Entity entity = cellVisitors.get(i);
-            if (entity instanceof Movable m && !entity.isMoved()) {
-                Cell newCell = findDestinationCell(cell, ((Animal) entity).getMaxSteps());
-                m.move(cell, newCell);
-            } else {
-                i++;
-            }
-        }
-
     }
 
     private void decreaseSaturation(Cell cell, List<Entity> cellVisitors) {

@@ -4,9 +4,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.swing.*;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Getter
 public abstract class Entity implements Cloneable {
+    private final static AtomicLong idCounter = new AtomicLong(1);
+    private final long id = idCounter.incrementAndGet();
+
     private final double weight;
     private final int maxQuantity;
     private String icon;

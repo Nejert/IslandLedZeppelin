@@ -13,7 +13,7 @@ public class Rnd {
 
     static {
         if (DEBUG) {
-            SEED = 1234;
+            SEED = 1235;
             random = new Random(SEED);
         } else {
             SEED = -1;

@@ -1,42 +1,24 @@
 package com.javarush.island.kazakov.system;
 
-import com.javarush.island.kazakov.component.Reproducible;
-import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.entity.abstraction.Animal;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
 import com.javarush.island.kazakov.entity.misc.EntityFactory;
 import com.javarush.island.kazakov.entity.misc.EntityType;
 import com.javarush.island.kazakov.map.Cell;
 import com.javarush.island.kazakov.map.GameMap;
+import com.javarush.island.khmelov.util.Rnd;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
 
-public class ReproduceSystem {
-    private final GameMap gameMap;
+public class ReproduceSystem extends AbstractSystem {
 
     public ReproduceSystem(GameMap gameMap) {
-        this.gameMap = gameMap;
+        super(gameMap);
     }
 
+    @Override
     public void update() {
-        reproduce(this::reproduceAllInCell);
-    }
-
-    private void reproduce(BiConsumer<Cell, List<Entity>> action) {
-        for (int y = 0; y < Default.ROWS; y++) {
-            for (int x = 0; x < Default.COLS; x++) {
-                Cell cell = gameMap.getCell(y, x);
-                for (Map.Entry<Class<? extends Entity>, List<Entity>> entry : cell.getVisitors().entrySet()) {
-                    action.accept(cell, entry.getValue());
-                }
-            }
-        }
-    }
-
-    private void resetFlag(List<Entity> cellVisitors) {
-        cellVisitors.forEach(entity -> entity.setParent(false));
+        accept(this::reproduceAllInCell);
     }
 
     private void reproduceAllInCell(Cell cell, List<Entity> cellVisitors) {
@@ -49,13 +31,18 @@ public class ReproduceSystem {
                 Entity couple = findCouple(cellVisitors);
                 if (couple != null && animal != couple) {
                     ((Animal) entity).reproduce(couple);
-                    offspring++;
+                    if (Rnd.get(50))
+                        offspring++;
                 }
             }
         }
         if (offspring > 0) {
             born(cellVisitors.get(0), cellVisitors, offspring);
         }
+    }
+
+    private void resetFlag(List<Entity> cellVisitors) {
+        cellVisitors.forEach(entity -> entity.setParent(false));
     }
 
     private void born(Entity entity, List<Entity> cellVisitors, int offspring) {

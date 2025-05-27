@@ -18,4 +18,10 @@ public class SwingView implements View {
     public void update() {
         windowManager.update();
     }
+
+    @Override
+    public void exit() {
+        windowManager.setVisible(false);
+        windowManager.dispose();
+    }
 }

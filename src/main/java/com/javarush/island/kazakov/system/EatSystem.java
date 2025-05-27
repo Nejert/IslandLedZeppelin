@@ -25,8 +25,11 @@ public class EatSystem extends AbstractSystem {
         for (int y = 0; y < Default.ROWS; y++) {
             for (int x = 0; x < Default.COLS; x++) {
                 Cell cell = gameMap.getCell(y, x);
-                synchronized (cell) {
+                cell.lock();
+                try {
                     eat(cell);
+                } finally {
+                    cell.unlock();
                 }
             }
         }

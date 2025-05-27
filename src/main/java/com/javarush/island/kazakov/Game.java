@@ -3,8 +3,6 @@ package com.javarush.island.kazakov;
 import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.entity.abstraction.Animal;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
-import com.javarush.island.kazakov.entity.misc.EntityFactory;
-import com.javarush.island.kazakov.entity.misc.EntityType;
 import com.javarush.island.kazakov.map.Cell;
 import com.javarush.island.kazakov.map.GameMap;
 import com.javarush.island.kazakov.map.Spawner;
@@ -40,7 +38,7 @@ public class Game extends Thread {
         scheduledExecutor.scheduleAtFixedRate(this::update, 0, 1000, TimeUnit.MILLISECONDS);
     }
 
-        private void initialize() {
+    private void initialize() {
         spawner = new Spawner(gameMap);
         spawner.initialSpawn();
     }
@@ -55,9 +53,10 @@ public class Game extends Thread {
         systems.forEach(s -> executor.submit(s::update));
         view.forEach(v -> executor.submit(v::update));
         executor.submit(this::checkSimulationEnd);
-        if (!running){
+        if (!running) {
             executor.shutdown();
             scheduledExecutor.shutdown();
+            view.forEach(View::exit);
         }
     }
 
@@ -65,7 +64,8 @@ public class Game extends Thread {
         for (int y = 0; y < Default.ROWS; y++) {
             for (int x = 0; x < Default.COLS; x++) {
                 Cell cell = gameMap.getCell(y, x);
-                synchronized (cell) {
+                cell.lock();
+                try {
                     for (Map.Entry<Class<? extends Entity>, List<Entity>> entry : cell.getVisitors().entrySet()) {
                         for (Entity entity : entry.getValue()) {
                             if (entity instanceof Animal) {
@@ -74,6 +74,8 @@ public class Game extends Thread {
                             }
                         }
                     }
+                } finally {
+                    cell.unlock();
                 }
             }
         }

@@ -4,17 +4,8 @@ import com.javarush.island.kazakov.component.Eating;
 import com.javarush.island.kazakov.component.Movable;
 import com.javarush.island.kazakov.component.Reproducible;
 import com.javarush.island.kazakov.config.Default;
-import com.javarush.island.kazakov.entity.misc.EatingProbability;
-import com.javarush.island.kazakov.entity.misc.EntityType;
 import com.javarush.island.kazakov.map.Cell;
-import com.javarush.island.kazakov.util.Direction;
-import com.javarush.island.kazakov.util.Location;
-import com.javarush.island.kazakov.util.Rnd;
 import lombok.Getter;
-
-import java.util.List;
-import java.util.Map;
-
 
 @Getter
 public abstract class Animal extends Entity implements Movable, Eating, Reproducible {
@@ -77,10 +68,20 @@ public abstract class Animal extends Entity implements Movable, Eating, Reproduc
 
     @Override
     public void move(Cell origin, Cell dest) {
-        synchronized (origin) {
+        dest.lock();
+        try {
             dest.add(this);
-            setMoved(true);
-            origin.remove(this);
+            setMoved(dest.contains(this));
+        } finally {
+            dest.unlock();
+        }
+        origin.lock();
+        try {
+            if (this.isMoved()) {
+                origin.remove(this);
+            }
+        } finally {
+            origin.unlock();
         }
     }
 }

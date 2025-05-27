@@ -1,10 +1,7 @@
 package com.javarush.island.kazakov.map;
 
 import com.javarush.island.kazakov.config.Default;
-import com.javarush.island.kazakov.entity.misc.EntityFactory;
-import com.javarush.island.kazakov.entity.misc.EntityType;
 import com.javarush.island.kazakov.util.Location;
-import com.javarush.island.kazakov.util.Rnd;
 import lombok.Getter;
 
 public class GameMap {

@@ -2,6 +2,7 @@ package com.javarush.island.kazakov.view.console;
 
 import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
+import com.javarush.island.kazakov.map.Cell;
 import com.javarush.island.kazakov.map.GameMap;
 import com.javarush.island.kazakov.view.View;
 import javafx.util.Pair;
@@ -44,18 +45,24 @@ public class ConsoleView implements View {
         Map<Class<? extends Entity>, Pair<String, Integer>> stat = new HashMap<>();
         for (int y = 0; y < Default.ROWS; y++) {
             for (int x = 0; x < Default.COLS; x++) {
-                for (Map.Entry<Class<? extends Entity>, List<Entity>> entry : gameMap.getCell(y, x).getVisitors().entrySet()) {
-                    if (!entry.getValue().isEmpty()) {
-                        String name = entry.getValue().get(0).getIcon() + " " + entry.getKey().getSimpleName();
-                        Pair<String, Integer> nameQuant;
-                        if (stat.get(entry.getKey()) == null) {
-                            nameQuant = new Pair<>(name, entry.getValue().size());
-                        }else {
-                            int sum = stat.get(entry.getKey()).getValue()+entry.getValue().size();
-                            nameQuant = new Pair<>(name, sum);
+                Cell cell = gameMap.getCell(y, x);
+                cell.lock();
+                try {
+                    for (Map.Entry<Class<? extends Entity>, List<Entity>> entry : cell.getVisitors().entrySet()) {
+                        if (!entry.getValue().isEmpty()) {
+                            String name = entry.getValue().get(0).getIcon() + " " + entry.getKey().getSimpleName();
+                            Pair<String, Integer> nameQuant;
+                            if (stat.get(entry.getKey()) == null) {
+                                nameQuant = new Pair<>(name, entry.getValue().size());
+                            } else {
+                                int sum = stat.get(entry.getKey()).getValue() + entry.getValue().size();
+                                nameQuant = new Pair<>(name, sum);
+                            }
+                            stat.put(entry.getKey(), nameQuant);
                         }
-                        stat.put(entry.getKey(), nameQuant);
                     }
+                } finally {
+                    cell.unlock();
                 }
             }
         }
@@ -66,5 +73,10 @@ public class ConsoleView implements View {
     public void update() {
         System.out.println(display());
         System.out.println(displayStats());
+    }
+
+    @Override
+    public void exit() {
+        System.out.println("Application has terminated");
     }
 }

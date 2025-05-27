@@ -22,9 +22,12 @@ public abstract class AbstractSystem {
         for (int y = 0; y < Default.ROWS; y++) {
             for (int x = 0; x < Default.COLS; x++) {
                 Cell cell = gameMap.getCell(y, x);
-                synchronized (cell) {
-                    for (Map.Entry<Class<? extends Entity>, List<Entity>> entry : cell.getVisitors().entrySet()) {
+                for (Map.Entry<Class<? extends Entity>, List<Entity>> entry : cell.getVisitors().entrySet()) {
+                    cell.lock();
+                    try {
                         action.accept(cell, entry.getValue());
+                    } finally {
+                        cell.unlock();
                     }
                 }
             }

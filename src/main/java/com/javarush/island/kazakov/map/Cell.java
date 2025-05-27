@@ -8,9 +8,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Getter
 public class Cell {
+    private final Lock lock = new ReentrantLock(true);
     private final Map<Class<? extends Entity>, List<Entity>> visitors;
     private final Location location;
 
@@ -36,11 +39,25 @@ public class Cell {
         return visitors.get(entity.getClass()).remove(entity);
     }
 
+    public boolean contains(Entity entity) {
+        List<Entity> entities = visitors.get(entity.getClass());
+        if (entities != null && !entities.isEmpty()) {
+            return entities.contains(entity);
+        }
+        return false;
+    }
+
     public List<Entity> get(Class<? extends Entity> entityClass) {
         return visitors.get(entityClass);
     }
 
+    public void lock() {
+        lock.lock();
+    }
 
+    public void unlock() {
+        lock.unlock();
+    }
 
     @Override
     public String toString() {

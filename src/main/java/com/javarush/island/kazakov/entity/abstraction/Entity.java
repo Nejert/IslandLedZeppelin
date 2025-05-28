@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.swing.*;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Getter
@@ -63,6 +61,4 @@ public abstract class Entity implements Cloneable {
     public String toString() {
         return this.getClass().getSimpleName() + " " + icon;
     }
-
-
 }

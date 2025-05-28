@@ -1,5 +1,7 @@
 package com.javarush.island.kazakov.view.swing;
 
+import com.javarush.island.kazakov.config.Config;
+import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
 
 import javax.swing.*;
@@ -7,14 +9,14 @@ import java.awt.*;
 
 public class CellComponent extends JComponent {
     private EntityGroupComponent currentGroup;
-    private final int groupCapacity = 5;
     private final boolean debug;
 
     public CellComponent(boolean debug) {
         this.debug = debug;
-        this.currentGroup = new EntityGroupComponent(groupCapacity, debug);
+        this.currentGroup = new EntityGroupComponent(Config.get().getEntityGroupCapacity(), debug);
         this.add(currentGroup, 0);
-        this.setBorder(BorderFactory.createStrokeBorder(new BasicStroke(1), Color.LIGHT_GRAY));
+        this.setBorder(BorderFactory.createStrokeBorder(
+                new BasicStroke(Config.get().getGridStrokeWidth()), Config.get().getGridLinesColor()));
         this.setLayout(new CellLayout());
 
     }
@@ -25,30 +27,17 @@ public class CellComponent extends JComponent {
 
     @Override
     public Component add(Component comp) {
-        if (currentGroup.getComponents().length >= groupCapacity) {
-            currentGroup = new EntityGroupComponent(groupCapacity, debug);
+        if (currentGroup.getComponents().length >= Config.get().getEntityGroupCapacity()) {
+            currentGroup = new EntityGroupComponent(Config.get().getEntityGroupCapacity(), debug);
             this.add(currentGroup, this.getComponentCount());
         }
         return currentGroup.add(comp);
     }
 
-    public void clear(){
+    public void clear() {
         this.removeAll();
-        this.currentGroup = new EntityGroupComponent(groupCapacity, debug);
+        this.currentGroup = new EntityGroupComponent(Config.get().getEntityGroupCapacity(), debug);
         this.add(currentGroup, 0);
-    }
-
-    public EntityComponent getEntityComponent(Class<? extends Entity> e){
-        for (Component component : getComponents()) {
-            EntityGroupComponent group = (EntityGroupComponent) component;
-            for (Component groupComponent : group.getComponents()) {
-                EntityComponent entityComponent = (EntityComponent) groupComponent;
-                if (entityComponent.getEntity().getClass() == e){
-                    return entityComponent;
-                }
-            }
-        }
-        return null;
     }
 
     private class CellLayout implements LayoutManager {

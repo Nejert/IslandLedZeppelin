@@ -1,0 +1,17 @@
+<Config>
+    <rows>10</rows>
+    <cols>10</cols>
+    <animalMovesCount>10</animalMovesCount>
+    <birthProbability>50</birthProbability>
+    <tickPeriodMs>1000</tickPeriodMs>
+    <width>640</width>
+    <height>480</height>
+    <gridStrokeWidth>1</gridStrokeWidth>
+    <statWidthPercentage>10</statWidthPercentage>
+    <entityGroupCapacity>5</entityGroupCapacity>
+    <backgroundColor>#808080</backgroundColor>
+    <gridLinesColor>#C0C0C0</gridLinesColor>
+    <windowTitle>Island</windowTitle>
+    <spawnConfig>/kazakov/initialSpawnProbabilityConfig.yaml</spawnConfig>
+    <entityConfig>/kazakov/entityConfig.json</entityConfig>
+</Config>

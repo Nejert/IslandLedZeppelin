@@ -12,7 +12,6 @@ public class EntityComponent extends JComponent {
     private final ImageIcon icon;
     private int quantity;
     private final boolean debug;
-    private final int initialFontSize = 30;
     private final float imageFontRatio;
     private final Dimension iconSize;
     private final Point iconPosition;
@@ -33,11 +32,12 @@ public class EntityComponent extends JComponent {
         icon = entity.getImageIcon();
         int originalIconSize = Math.min(icon.getIconWidth(), icon.getIconHeight());
         iconSize = new Dimension(originalIconSize, originalIconSize);
-        iconPosition = new Point(0,0);
+        iconPosition = new Point(0, 0);
 
         textSize = new Dimension(0, 0);
         textPosition = new Point(0, 0);
 
+        int initialFontSize = 30;
         font = new Font("Arial", Font.BOLD, initialFontSize);
         imageFontRatio = (float) initialFontSize / iconSize.width;
         fontMetrics = getFontMetrics(font);
@@ -49,24 +49,13 @@ public class EntityComponent extends JComponent {
 
     private void setSize(int size) {
         iconSize.width = iconSize.height = size;
-        font = font.deriveFont(imageFontRatio*size);
+        font = font.deriveFont(imageFontRatio * size);
         fontMetrics = getFontMetrics(font);
     }
 
-    private void setPosition(int x, int y) {
-        iconPosition.x = x;
-        iconPosition.y = y;
-    }
-
     public void setBounds(int x, int y, int size) {
-        //setPosition(x, y);
         setSize(size);
         setBounds(x, y, size, size);
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-        repaint();
     }
 
     private void calcTextBounds() {
@@ -74,14 +63,10 @@ public class EntityComponent extends JComponent {
         textSize.height = fontMetrics.getHeight();
         textPosition.x = iconPosition.x;
         textPosition.y = iconSize.height - textSize.height + fontMetrics.getAscent() + iconPosition.y;
-//        centered
-//        textX = iconSize.width / 2 - textWidth / 2 + iconX;
-//        textY = iconSize.height + fontMetrics.getAscent() + iconY;
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-//        super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);

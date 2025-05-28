@@ -3,6 +3,7 @@ package com.javarush.island.kazakov.entity.abstraction;
 import com.javarush.island.kazakov.component.Eating;
 import com.javarush.island.kazakov.component.Movable;
 import com.javarush.island.kazakov.component.Reproducible;
+import com.javarush.island.kazakov.config.Config;
 import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.map.Cell;
 import lombok.Getter;
@@ -20,7 +21,7 @@ public abstract class Animal extends Entity implements Movable, Eating, Reproduc
         this.maxSteps = maxSteps;
         this.saturation = saturation;
         this.currentSaturation = saturation;
-        this.saturationDecreaseFactor = saturation / Default.ANIMAL_MOVES_COUNT;
+        this.saturationDecreaseFactor = saturation / Config.get().getAnimalMovesCount();
         this.quarterOfSaturation = saturation / 4;
     }
 
@@ -52,7 +53,7 @@ public abstract class Animal extends Entity implements Movable, Eating, Reproduc
     }
 
     public boolean desireToBeNaughty() {
-        return currentSaturation >= saturation - quarterOfSaturation;
+        return saturation - quarterOfSaturation <= currentSaturation;
     }
 
     @Override

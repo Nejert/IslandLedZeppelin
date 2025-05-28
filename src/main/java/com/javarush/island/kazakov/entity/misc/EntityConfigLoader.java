@@ -3,6 +3,7 @@ package com.javarush.island.kazakov.entity.misc;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.javarush.island.kazakov.IslandException;
+import com.javarush.island.kazakov.component.annotation.Metric;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
 
 import javax.swing.*;
@@ -16,59 +17,55 @@ import java.util.Map;
 import java.util.Objects;
 
 public class EntityConfigLoader {
+
     private EntityConfigLoader() {
     }
 
     public static Map<EntityType, Entity> loadPrototypes(String path) {
         Map<EntityType, Entity> entities = new HashMap<>();
         ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = null;
+        JsonNode jsonEntityNode = null;
         try {
-            jsonNode = objectMapper.readTree(EntityConfigLoader.class.getResource(path));
+            jsonEntityNode = objectMapper.readTree(EntityConfigLoader.class.getResource(path));
         } catch (IOException e) {
             throw new IslandException("Unable to read entities config ", e);
         }
+        for (Iterator<String> it = jsonEntityNode.fieldNames(); it.hasNext(); ) {
+            String name = it.next();
+            EntityType type = EntityType.valueOf(name.toUpperCase());
+            JsonNode jsonEntity = jsonEntityNode.get(name);
+            Class<? extends Entity> entityClass = type.getClazz();
+            if (entityClass.isAnnotationPresent(Metric.class)) {
+                Metric metric = entityClass.getAnnotation(Metric.class);
+                Constructor<?> constructor = entityClass.getConstructors()[0];
+                Entity entity = null;
 
-        try {
-            for (Iterator<String> it = jsonNode.fieldNames(); it.hasNext(); ) {
-                String name = it.next();
-                EntityType type = EntityType.valueOf(name.toUpperCase());
-                JsonNode node = jsonNode.get(name);
+                JsonNode jsonWeight = jsonEntity.get("weight");
+                JsonNode jsonMaxQuantity = jsonEntity.get("maxQuantity");
+                JsonNode jsonMaxSteps = jsonEntity.get("maxSteps");
+                JsonNode jsonSaturation = jsonEntity.get("saturation");
+                JsonNode jsonIcon = jsonEntity.get("icon");
+                JsonNode jsonImageIcon = jsonEntity.get("imageIcon");
 
-                double weight;
-                int maxQuantity;
-                int maxSteps;
-                double saturation;
-                String icon;
-                ImageIcon imageIcon;
-                Entity e = null;
-                Constructor<? extends Entity> constructor;
-
-                if (type == EntityType.PLANT) {
-                    constructor = type.getClazz().getConstructor(double.class, int.class);
-                    weight = node.get("weight").asDouble();
-                    maxQuantity = node.get("maxQuantity").asInt();
-                    icon = node.get("icon").asText();
-                    imageIcon = loadImageIcon(node.get("imageIcon").asText());
-                    e = constructor.newInstance(weight, maxQuantity);
-                } else {
-                    constructor = type.getClazz().getConstructor(double.class, int.class, int.class, double.class);
-                    weight = node.get("weight").asDouble();
-                    maxQuantity = node.get("maxQuantity").asInt();
-                    maxSteps = node.get("maxSteps").asInt();
-                    saturation = node.get("saturation").asDouble();
-                    icon = node.get("icon").asText();
-                    imageIcon = loadImageIcon(node.get("imageIcon").asText());
-                    e = constructor.newInstance(weight, maxQuantity, maxSteps, saturation);
+                double weight = jsonWeight != null ? jsonWeight.asDouble() : metric.weight();
+                int maxQuantity = jsonMaxQuantity != null ? jsonMaxQuantity.asInt() : metric.maxQuantity();
+                int maxSteps = jsonMaxSteps != null ? jsonMaxSteps.asInt() : metric.maxSteps();
+                double saturation = jsonSaturation != null ? jsonSaturation.asDouble() : metric.saturation();
+                String icon = jsonIcon != null ? jsonIcon.asText() : metric.icon();
+                String imageIcon = jsonImageIcon != null ? jsonImageIcon.asText() : metric.imageIcon();
+                try {
+                    if (constructor.getParameterCount() > 2) {
+                        entity = (Entity) constructor.newInstance(weight, maxQuantity, maxSteps, saturation);
+                    } else {
+                        entity = (Entity) constructor.newInstance(weight, maxQuantity);
+                    }
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                    throw new IslandException("Unable to instantiate an object: ", e);
                 }
-                e.setIcon(icon);
-                e.setImageIcon(imageIcon);
-                entities.put(type, e);
+                entity.setIcon(icon);
+                entity.setImageIcon(loadImageIcon(imageIcon));
+                entities.put(type, entity);
             }
-        } catch (NoSuchMethodException e) {
-            throw new IslandException("Unable to find constructor ", e);
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            throw new IslandException("Unable to instantiate an object", e);
         }
         return entities;
     }

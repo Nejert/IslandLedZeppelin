@@ -1,17 +1,22 @@
 package com.javarush.island.kazakov.view.swing;
 
+import com.javarush.island.kazakov.config.Config;
 import com.javarush.island.kazakov.map.GameMap;
 import com.javarush.island.kazakov.view.View;
 
 import javax.swing.*;
 
 public class SwingView implements View {
-    private final GameMap gameMap;
     private WindowManager windowManager;
 
     public SwingView(GameMap gameMap) {
-        this.gameMap = gameMap;
-        SwingUtilities.invokeLater(() -> windowManager = new WindowManager("Island", gameMap, 640, 480));
+        SwingUtilities.invokeLater(() ->
+                windowManager = new WindowManager(
+                        Config.get().getWindowTitle(),
+                        gameMap,
+                        Config.get().getWidth(),
+                        Config.get().getHeight()
+                ));
     }
 
     @Override

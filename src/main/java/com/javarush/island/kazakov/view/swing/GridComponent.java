@@ -1,5 +1,6 @@
 package com.javarush.island.kazakov.view.swing;
 
+import com.javarush.island.kazakov.config.Config;
 import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
 import com.javarush.island.kazakov.map.GameMap;
@@ -12,25 +13,25 @@ import java.util.List;
 
 public class GridComponent extends JComponent {
     private final boolean debug;
-    private final int strokeWidth;
     private final CellComponent[][] cellComponents;
     private final Color backgroundColor;
-    private final Color linesColor;
     private final GameMap gameMap;
+    private final StatisticsComponent statisticsComponent;
 
     public GridComponent(GameMap gameMap) {
         this(gameMap, false);
     }
 
     public GridComponent(GameMap gameMap, boolean debug) {
-        strokeWidth = 2;
-        backgroundColor = Color.GRAY;
-        linesColor = Color.LIGHT_GRAY;
+        backgroundColor = Config.get().getBackgroundColor();
         this.debug = debug;
         this.gameMap = gameMap;
-        cellComponents = new CellComponent[Default.ROWS][Default.COLS];
-        for (int y = 0; y < Default.ROWS; y++) {
-            for (int x = 0; x < Default.COLS; x++) {
+        statisticsComponent = new StatisticsComponent(gameMap, Config.get().getStatWidthPercentage());
+        statisticsComponent.setBackground(backgroundColor);
+        this.add(statisticsComponent);
+        cellComponents = new CellComponent[gameMap.getRows()][gameMap.getCols()];
+        for (int y = 0; y < gameMap.getRows(); y++) {
+            for (int x = 0; x < gameMap.getCols(); x++) {
                 CellComponent cellComponent = new CellComponent(debug);
                 cellComponents[y][x] = cellComponent;
                 this.add(cellComponent);
@@ -55,19 +56,20 @@ public class GridComponent extends JComponent {
     }
 
     public void update() {
-        for (int y = 0; y < Default.ROWS; y++) {
-            for (int x = 0; x < Default.COLS; x++) {
+        for (int y = 0; y < gameMap.getRows(); y++) {
+            for (int x = 0; x < gameMap.getCols(); x++) {
                 Map<Class<? extends Entity>, List<Entity>> visitors = gameMap.getCell(y, x).getVisitors();
                 CellComponent cellComponent = cellComponents[y][x];
                 cellComponent.clear();
                 for (Map.Entry<Class<? extends Entity>, List<Entity>> entry : visitors.entrySet()) {
                     if (!entry.getValue().isEmpty()) {
-                        EntityComponent entityComponent = new EntityComponent(entry.getValue().get(0), entry.getValue().size());
+                        EntityComponent entityComponent = new EntityComponent(entry.getValue().get(0), entry.getValue().size(), debug);
                         cellComponent.add(entityComponent);
                     }
                 }
             }
         }
+        statisticsComponent.update();
     }
 
     private class LocalGridLayout implements LayoutManager {
@@ -93,13 +95,15 @@ public class GridComponent extends JComponent {
         @Override
         public void layoutContainer(Container parent) {
             Component[] components = parent.getComponents();
-            int cellWidth = Math.round((float) parent.getWidth() / Default.COLS);
-            int cellHeight = Math.round((float) parent.getHeight() / Default.ROWS);
+            int statWidth = Math.round((float) getWidth() / 100 * statisticsComponent.getPercentWidth());
+            int cellWidth = Math.round((float) (parent.getWidth() - statWidth) / gameMap.getCols());
+            int cellHeight = Math.round((float) parent.getHeight() / gameMap.getRows());
+            components[0].setBounds(0, 0, statWidth, parent.getHeight());
             int col = 0, row = 0;
-            for (Component component : parent.getComponents()) {
-                component.setBounds(cellWidth * col, cellHeight * row, cellWidth, cellHeight);
+            for (int i = 1; i < components.length; i++) {
+                components[i].setBounds(cellWidth * col+statWidth, cellHeight * row, cellWidth, cellHeight);
                 col++;
-                if (col >= Default.COLS) {
+                if (col >= gameMap.getCols()) {
                     col = 0;
                     row++;
                 }

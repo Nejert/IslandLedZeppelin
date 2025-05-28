@@ -1,7 +1,6 @@
 package com.javarush.island.kazakov.system;
 
 import com.javarush.island.kazakov.component.Eating;
-import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.entity.abstraction.Animal;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
 import com.javarush.island.kazakov.entity.misc.EatingProbability;
@@ -21,9 +20,8 @@ public class EatSystem extends AbstractSystem {
 
     @Override
     public void update() {
-        //accept(this::eat);
-        for (int y = 0; y < Default.ROWS; y++) {
-            for (int x = 0; x < Default.COLS; x++) {
+        for (int y = 0; y < gameMap.getRows(); y++) {
+            for (int x = 0; x < gameMap.getCols(); x++) {
                 Cell cell = gameMap.getCell(y, x);
                 cell.lock();
                 try {
@@ -72,7 +70,7 @@ public class EatSystem extends AbstractSystem {
         return null;
     }
 
-    private void killStarvingAnimals(Cell cell, List<Entity> cellVisitors) {
+    private void killStarvingAnimals(Cell ignoredCell, List<Entity> cellVisitors) {
         for (int i = 0; i < cellVisitors.size(); ) {
             Entity entity = cellVisitors.get(i);
             if (entity.isDead()) {

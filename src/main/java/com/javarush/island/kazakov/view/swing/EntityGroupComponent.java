@@ -1,5 +1,7 @@
 package com.javarush.island.kazakov.view.swing;
 
+import com.javarush.island.kazakov.config.Config;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -15,11 +17,7 @@ public class EntityGroupComponent extends JComponent {
     }
 
     public EntityGroupComponent() {
-        this(4, false);
-    }
-
-    public int getCapacity() {
-        return capacity;
+        this(Config.get().getEntityGroupCapacity(), false);
     }
 
     private class EntityGroupLayout implements LayoutManager {

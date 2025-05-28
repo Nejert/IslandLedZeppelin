@@ -1,5 +1,6 @@
 package com.javarush.island.kazakov;
 
+import com.javarush.island.kazakov.config.Config;
 import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.entity.abstraction.Animal;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
@@ -14,42 +15,33 @@ import java.util.Map;
 import java.util.concurrent.*;
 
 public class Game extends Thread {
-    public static final int CORE_AMT = Runtime.getRuntime().availableProcessors();
+    private static final int CORE_AMT = Runtime.getRuntime().availableProcessors();
     private final GameMap gameMap;
     private final List<AbstractSystem> systems;
     private final List<View> view;
+    private final ScheduledExecutorService scheduledExecutor;
+    private final ExecutorService executor;
+    private final Spawner spawner;
     private boolean running;
-    private ScheduledExecutorService scheduledExecutor;
-    private ExecutorService executor;
-    private Spawner spawner;
 
     public Game(GameMap gameMap, List<AbstractSystem> systems, View... view) {
         this.gameMap = gameMap;
         this.systems = systems;
         this.view = List.of(view);
+        scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
+        executor = Executors.newFixedThreadPool(CORE_AMT);
+        spawner = new Spawner(gameMap);
     }
 
     @Override
     public void run() {
-        initialize();
-        executor = Executors.newFixedThreadPool(CORE_AMT);
-        scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
-        running = true;
-        scheduledExecutor.scheduleAtFixedRate(this::update, 0, 1000, TimeUnit.MILLISECONDS);
-    }
-
-    private void initialize() {
-        spawner = new Spawner(gameMap);
         spawner.initialSpawn();
+        running = true;
+        scheduledExecutor.scheduleAtFixedRate(this::update, 0, Config.get().getTickPeriodMs(), TimeUnit.MILLISECONDS);
     }
-//    private void initialize() {
-//        spawner = new Spawner(gameMap);
-//        gameMap.getCell(0,0).add(EntityFactory.newEntity(EntityType.WOLF));
-//        gameMap.getCell(1,1).add(EntityFactory.newEntity(EntityType.RABBIT));
-//    }
 
     private void update() {
-        executor.submit(() -> spawner.spawnPlants());
+        executor.submit(spawner::cyclicSpawnPlants);
         systems.forEach(s -> executor.submit(s::update));
         view.forEach(v -> executor.submit(v::update));
         executor.submit(this::checkSimulationEnd);
@@ -61,8 +53,8 @@ public class Game extends Thread {
     }
 
     private void checkSimulationEnd() {
-        for (int y = 0; y < Default.ROWS; y++) {
-            for (int x = 0; x < Default.COLS; x++) {
+        for (int y = 0; y < Config.get().getRows(); y++) {
+            for (int x = 0; x < Config.get().getCols(); x++) {
                 Cell cell = gameMap.getCell(y, x);
                 cell.lock();
                 try {

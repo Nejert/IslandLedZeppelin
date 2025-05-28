@@ -14,8 +14,8 @@ public class Spawner {
     }
 
     private void spawn(int probability, EntityType type, int quantity) {
-        for (int y = 0; y < Default.ROWS; y++) {
-            for (int x = 0; x < Default.COLS; x++) {
+        for (int y = 0; y < gameMap.getRows(); y++) {
+            for (int x = 0; x < gameMap.getCols(); x++) {
                 for (int k = 0; k < Rnd.random(quantity); k++) {
                     if (Rnd.get(probability)) {
                         gameMap.getCell(y, x).add(EntityFactory.newEntity(type));
@@ -37,7 +37,7 @@ public class Spawner {
         }
     }
 
-    public void spawnPlants() {
+    public void cyclicSpawnPlants() {
         spawn(SpawnProbability.get(EntityType.PLANT), EntityType.PLANT, 2);
     }
 }

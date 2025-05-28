@@ -78,7 +78,7 @@ public class MoveSystem extends AbstractSystem {
             case LEFT -> tempX--;
             case RIGHT -> tempX++;
         }
-        if (tempX >= 0 && tempY >= 0 && tempX < Default.COLS && tempY < Default.ROWS) {
+        if (tempX >= 0 && tempY >= 0 && tempX < gameMap.getCols() && tempY < gameMap.getRows()) {
             return new Location(tempX, tempY);
         }
         return oldLocation;

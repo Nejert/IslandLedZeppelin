@@ -19,8 +19,8 @@ public abstract class AbstractSystem {
     public abstract void update();
 
     protected void accept(BiConsumer<Cell, List<Entity>> action) {
-        for (int y = 0; y < Default.ROWS; y++) {
-            for (int x = 0; x < Default.COLS; x++) {
+        for (int y = 0; y < gameMap.getRows(); y++) {
+            for (int x = 0; x < gameMap.getCols(); x++) {
                 Cell cell = gameMap.getCell(y, x);
                 for (Map.Entry<Class<? extends Entity>, List<Entity>> entry : cell.getVisitors().entrySet()) {
                     cell.lock();

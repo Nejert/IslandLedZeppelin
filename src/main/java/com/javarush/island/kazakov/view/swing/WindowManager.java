@@ -7,9 +7,7 @@ import javax.swing.*;
 public class WindowManager extends JFrame {
     private final int width;
     private final int height;
-    private final boolean debug;
-    private final GameMap gameMap;
-    private GridComponent gridComponent;
+    private final GridComponent gridComponent;
 
     public WindowManager(String title, GameMap gameMap, int width, int height) {
         this(title, gameMap, width, height, false);
@@ -17,12 +15,10 @@ public class WindowManager extends JFrame {
 
     public WindowManager(String title, GameMap gameMap, int width, int height, boolean debug) {
         super(title);
-        this.gameMap = gameMap;
         this.width = width;
         this.height = height;
-        this.debug = debug;
         frameInit();
-        gridComponent = new GridComponent(gameMap);
+        gridComponent = new GridComponent(gameMap, debug);
         this.add(gridComponent);
         this.setVisible(true);
     }

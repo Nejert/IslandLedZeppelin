@@ -1,5 +1,7 @@
 package com.javarush.island.kazakov.system;
 
+import com.javarush.island.kazakov.config.Config;
+import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.entity.abstraction.Animal;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
 import com.javarush.island.kazakov.entity.misc.EntityFactory;
@@ -31,7 +33,7 @@ public class ReproduceSystem extends AbstractSystem {
                 Entity couple = findCouple(cellVisitors);
                 if (couple != null && animal != couple) {
                     ((Animal) entity).reproduce(couple);
-                    if (Rnd.get(50))
+                    if (Rnd.get(Config.get().getBirthProbability()))
                         offspring++;
                 }
             }

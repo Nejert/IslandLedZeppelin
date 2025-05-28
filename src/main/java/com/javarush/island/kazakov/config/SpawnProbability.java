@@ -2,6 +2,7 @@ package com.javarush.island.kazakov.config;
 
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import com.javarush.island.kazakov.IslandException;
 import com.javarush.island.kazakov.entity.misc.EntityType;
 
 import java.io.IOException;
@@ -17,26 +18,26 @@ public class SpawnProbability {
 
     static {
         spawnProbability = new HashMap<>();
-        spawnProbability.put(EntityType.WOLF, 30);
-        spawnProbability.put(EntityType.BOA, 20);
-        spawnProbability.put(EntityType.FOX, 40);
-        spawnProbability.put(EntityType.BEAR, 10);
-        spawnProbability.put(EntityType.EAGLE, 15);
-        spawnProbability.put(EntityType.HORSE, 5);
-        spawnProbability.put(EntityType.DEER, 5);
-        spawnProbability.put(EntityType.RABBIT, 60);
-        spawnProbability.put(EntityType.MOUSE, 60);
-        spawnProbability.put(EntityType.GOAT, 30);
-        spawnProbability.put(EntityType.SHEEP, 30);
-        spawnProbability.put(EntityType.BOAR, 20);
-        spawnProbability.put(EntityType.BUFFALO, 5);
-        spawnProbability.put(EntityType.DUCK, 60);
-        spawnProbability.put(EntityType.CATERPILLAR, 80);
-        spawnProbability.put(EntityType.PLANT, 10);
+        spawnProbability.put(EntityType.WOLF, Default.WOLF_SPAWN);
+        spawnProbability.put(EntityType.BOA, Default.BOA_SPAWN);
+        spawnProbability.put(EntityType.FOX, Default.FOX_SPAWN);
+        spawnProbability.put(EntityType.BEAR, Default.BEAR_SPAWN);
+        spawnProbability.put(EntityType.EAGLE, Default.EAGLE_SPAWN);
+        spawnProbability.put(EntityType.HORSE, Default.HORSE_SPAWN);
+        spawnProbability.put(EntityType.DEER, Default.DEER_SPAWN);
+        spawnProbability.put(EntityType.RABBIT, Default.RABBIT_SPAWN);
+        spawnProbability.put(EntityType.MOUSE, Default.MOUSE_SPAWN);
+        spawnProbability.put(EntityType.GOAT, Default.GOAT_SPAWN);
+        spawnProbability.put(EntityType.SHEEP, Default.SHEEP_SPAWN);
+        spawnProbability.put(EntityType.BOAR, Default.BOAR_SPAWN);
+        spawnProbability.put(EntityType.BUFFALO, Default.BUFFALO_SPAWN);
+        spawnProbability.put(EntityType.DUCK, Default.DUCK_SPAWN);
+        spawnProbability.put(EntityType.CATERPILLAR, Default.CATERPILLAR_SPAWN);
+        spawnProbability.put(EntityType.PLANT, Default.PLANT_SPAWN);
 
         ObjectMapper objectMapper = new YAMLMapper();
         try {
-            JsonNode jsonNode = objectMapper.readTree(SpawnProbability.class.getResource("/kazakov/InitialSpawnProbabilityConfig.yaml"));
+            JsonNode jsonNode = objectMapper.readTree(SpawnProbability.class.getResource(Config.get().getSpawnConfig()));
             Iterator<String> it = jsonNode.fieldNames();
             while (it.hasNext()) {
                 String key = it.next();
@@ -44,10 +45,11 @@ public class SpawnProbability {
                 spawnProbability.put(EntityType.valueOf(key.toUpperCase()), probability);
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IslandException("Unable to read spawn config ", e);
         }
     }
-    public static int get(EntityType type){
+
+    public static int get(EntityType type) {
         return spawnProbability.get(type);
     }
 }

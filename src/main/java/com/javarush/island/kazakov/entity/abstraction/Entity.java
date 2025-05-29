@@ -31,6 +31,7 @@ public abstract class Entity implements Cloneable {
         imageIcon = null;
     }
 
+    @SuppressWarnings("CopyConstructorMissesField")
     protected Entity(Entity e) {
         this.weight = e.weight;
         this.maxQuantity = e.maxQuantity;
@@ -38,6 +39,7 @@ public abstract class Entity implements Cloneable {
         imageIcon = e.imageIcon;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public boolean setIcon(String icon) {
         if (this.icon == null) {
             this.icon = icon;
@@ -46,6 +48,7 @@ public abstract class Entity implements Cloneable {
         return false;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public boolean setImageIcon(ImageIcon imageIcon) {
         if (this.imageIcon == null) {
             this.imageIcon = imageIcon;

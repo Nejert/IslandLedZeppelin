@@ -1,7 +1,6 @@
 package com.javarush.island.kazakov.view.swing;
 
 import com.javarush.island.kazakov.config.Config;
-import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
 import com.javarush.island.kazakov.map.GameMap;
 
@@ -18,6 +17,7 @@ public class GridComponent extends JComponent {
     private final GameMap gameMap;
     private final StatisticsComponent statisticsComponent;
 
+    @SuppressWarnings("unused")
     public GridComponent(GameMap gameMap) {
         this(gameMap, false);
     }
@@ -44,6 +44,7 @@ public class GridComponent extends JComponent {
         this.setLayout(new LocalGridLayout());
     }
 
+    @SuppressWarnings("unused")
     public Component add(Component comp, int x, int y) {
         return cellComponents[y][x].add(comp);
     }
@@ -55,18 +56,17 @@ public class GridComponent extends JComponent {
         g2d.fillRect(0, 0, getWidth(), getHeight());
     }
 
+    @SuppressWarnings("SequencedCollectionMethodCanBeUsed")
     public void update() {
         for (int y = 0; y < gameMap.getRows(); y++) {
             for (int x = 0; x < gameMap.getCols(); x++) {
                 Map<Class<? extends Entity>, List<Entity>> visitors = gameMap.getCell(y, x).getVisitors();
                 CellComponent cellComponent = cellComponents[y][x];
                 cellComponent.clear();
-                for (Map.Entry<Class<? extends Entity>, List<Entity>> entry : visitors.entrySet()) {
-                    if (!entry.getValue().isEmpty()) {
-                        EntityComponent entityComponent = new EntityComponent(entry.getValue().get(0), entry.getValue().size(), debug);
-                        cellComponent.add(entityComponent);
-                    }
-                }
+                visitors.values().stream()
+                        .filter(entities -> !entities.isEmpty())
+                        .map(entities -> new EntityComponent(entities.get(0), entities.size(), debug))
+                        .forEach(cellComponent::add);
             }
         }
         statisticsComponent.update();

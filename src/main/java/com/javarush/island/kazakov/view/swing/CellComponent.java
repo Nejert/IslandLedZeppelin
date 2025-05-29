@@ -1,8 +1,6 @@
 package com.javarush.island.kazakov.view.swing;
 
 import com.javarush.island.kazakov.config.Config;
-import com.javarush.island.kazakov.config.Default;
-import com.javarush.island.kazakov.entity.abstraction.Entity;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +11,7 @@ public class CellComponent extends JComponent {
 
     public CellComponent(boolean debug) {
         this.debug = debug;
-        this.currentGroup = new EntityGroupComponent(Config.get().getEntityGroupCapacity(), debug);
+        this.currentGroup = new EntityGroupComponent(debug);
         this.add(currentGroup, 0);
         this.setBorder(BorderFactory.createStrokeBorder(
                 new BasicStroke(Config.get().getGridStrokeWidth()), Config.get().getGridLinesColor()));
@@ -21,6 +19,7 @@ public class CellComponent extends JComponent {
 
     }
 
+    @SuppressWarnings("unused")
     public CellComponent() {
         this(false);
     }
@@ -28,7 +27,7 @@ public class CellComponent extends JComponent {
     @Override
     public Component add(Component comp) {
         if (currentGroup.getComponents().length >= Config.get().getEntityGroupCapacity()) {
-            currentGroup = new EntityGroupComponent(Config.get().getEntityGroupCapacity(), debug);
+            currentGroup = new EntityGroupComponent(debug);
             this.add(currentGroup, this.getComponentCount());
         }
         return currentGroup.add(comp);
@@ -36,11 +35,11 @@ public class CellComponent extends JComponent {
 
     public void clear() {
         this.removeAll();
-        this.currentGroup = new EntityGroupComponent(Config.get().getEntityGroupCapacity(), debug);
+        this.currentGroup = new EntityGroupComponent(debug);
         this.add(currentGroup, 0);
     }
 
-    private class CellLayout implements LayoutManager {
+    private static class CellLayout implements LayoutManager {
 
         @Override
         public void addLayoutComponent(String name, Component comp) {

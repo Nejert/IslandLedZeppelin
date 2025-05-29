@@ -81,9 +81,11 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.javarush.island.khmelov.ConsoleRunner</mainClass>
+                            <mainClass>com.javarush.island.kazakov.Application</mainClass>
                         </manifest>
                     </archive>
+                    <finalName>Island</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>

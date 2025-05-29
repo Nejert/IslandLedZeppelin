@@ -1,7 +1,6 @@
 package com.javarush.island.kazakov.system;
 
 import com.javarush.island.kazakov.component.Movable;
-import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.entity.abstraction.Animal;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
 import com.javarush.island.kazakov.map.Cell;
@@ -40,17 +39,15 @@ public class MoveSystem extends AbstractSystem {
         }
     }
 
-    private void resetFlag(Cell cell, List<Entity> cellVisitors) {
+    private void resetFlag(Cell ignoredCell, List<Entity> cellVisitors) {
         cellVisitors.forEach(entity -> entity.setMoved(false));
     }
 
-    private void decreaseSaturation(Cell cell, List<Entity> cellVisitors) {
-        for (int i = 0; i < cellVisitors.size(); i++) {
-            Entity entity = cellVisitors.get(i);
-            if (entity instanceof Animal animal) {
-                animal.decreaseSaturation();
-            }
-        }
+    private void decreaseSaturation(Cell ignoredCell, List<Entity> cellVisitors) {
+        cellVisitors.stream()
+                .filter(entity -> entity instanceof Animal)
+                .map(entity -> (Animal) entity)
+                .forEach(Animal::decreaseSaturation);
     }
 
     public Cell findDestinationCell(Cell origin, int maxSteps) {

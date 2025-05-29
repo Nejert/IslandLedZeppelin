@@ -1,7 +1,6 @@
 package com.javarush.island.kazakov;
 
 import com.javarush.island.kazakov.config.Config;
-import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.entity.abstraction.Animal;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
 import com.javarush.island.kazakov.map.Cell;

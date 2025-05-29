@@ -1,6 +1,5 @@
 package com.javarush.island.kazakov.util;
 
-import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
 import com.javarush.island.kazakov.map.Cell;
 import com.javarush.island.kazakov.map.GameMap;
@@ -14,6 +13,7 @@ public class Util {
     private Util() {
     }
 
+    @SuppressWarnings("SequencedCollectionMethodCanBeUsed")
     public static Map<Class<? extends Entity>, Pair<String, Integer>> gatherMapInfo(GameMap gameMap) {
         Map<Class<? extends Entity>, Pair<String, Integer>> stat = new HashMap<>();
         for (int y = 0; y < gameMap.getRows(); y++) {

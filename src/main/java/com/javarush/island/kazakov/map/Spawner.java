@@ -1,6 +1,5 @@
 package com.javarush.island.kazakov.map;
 
-import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.config.SpawnProbability;
 import com.javarush.island.kazakov.entity.misc.EntityFactory;
 import com.javarush.island.kazakov.entity.misc.EntityType;
@@ -25,6 +24,7 @@ public class Spawner {
         }
     }
 
+    @SuppressWarnings("unused")
     public void initialRandomSpawn() {
         for (EntityType type : EntityType.values()) {
             spawn(Rnd.random(0, 100), type, EntityFactory.newEntity(type).getMaxQuantity());

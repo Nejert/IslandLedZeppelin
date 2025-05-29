@@ -22,6 +22,7 @@ public class Cell {
         this.location = location;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public List<Entity> add(Entity entity) {
         List<Entity> entities = visitors.get(entity.getClass());
         if (entities == null) {
@@ -31,6 +32,7 @@ public class Cell {
         return visitors.put(entity.getClass(), entities);
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public boolean remove(Entity entity) {
         List<Entity> entities = visitors.get(entity.getClass());
         if (entities == null || entities.isEmpty()) {
@@ -59,14 +61,13 @@ public class Cell {
         lock.unlock();
     }
 
+    @SuppressWarnings("SequencedCollectionMethodCanBeUsed")
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        for (Map.Entry<Class<? extends Entity>, List<Entity>> entry : visitors.entrySet()) {
-            if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-                stringBuilder.append(entry.getValue().get(0).getIcon()).append(entry.getValue().size());
-            }
-        }
+        visitors.entrySet().stream()
+                .filter(entry -> entry.getValue() != null && !entry.getValue().isEmpty())
+                .forEach(entry -> stringBuilder.append(entry.getValue().get(0).getIcon()).append(entry.getValue().size()));
         return stringBuilder.isEmpty() ? "E" : stringBuilder.toString();
     }
 }

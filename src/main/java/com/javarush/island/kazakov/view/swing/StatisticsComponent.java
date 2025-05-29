@@ -40,16 +40,16 @@ public class StatisticsComponent extends JComponent {
     public void update() {
         this.removeAll();
         Map<Class<? extends Entity>, Pair<String, Integer>> infoMap = Util.gatherMapInfo(gameMap);
-        for (Map.Entry<Class<? extends Entity>, Pair<String, Integer>> entry : infoMap.entrySet()) {
-            Entity entity = EntityFactory.newEntity(EntityType.valueOf(entry.getKey()));
-            EntityComponent component = new EntityComponent(entity, entry.getValue().getValue());
+        infoMap.forEach((key, value) -> {
+            Entity entity = EntityFactory.newEntity(EntityType.valueOf(key));
+            EntityComponent component = new EntityComponent(entity, value.getValue());
             this.add(component);
-        }
+        });
         this.revalidate();
         this.repaint();
     }
 
-    private class StatLayout implements LayoutManager {
+    private static class StatLayout implements LayoutManager {
 
         @Override
         public void addLayoutComponent(String name, Component comp) {

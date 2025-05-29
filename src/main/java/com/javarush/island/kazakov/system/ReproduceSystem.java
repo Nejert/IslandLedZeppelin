@@ -1,7 +1,6 @@
 package com.javarush.island.kazakov.system;
 
 import com.javarush.island.kazakov.config.Config;
-import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.entity.abstraction.Animal;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
 import com.javarush.island.kazakov.entity.misc.EntityFactory;
@@ -11,6 +10,7 @@ import com.javarush.island.kazakov.map.GameMap;
 import com.javarush.island.khmelov.util.Rnd;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class ReproduceSystem extends AbstractSystem {
 
@@ -23,7 +23,8 @@ public class ReproduceSystem extends AbstractSystem {
         accept(this::reproduceAllInCell);
     }
 
-    private void reproduceAllInCell(Cell cell, List<Entity> cellVisitors) {
+    @SuppressWarnings("SequencedCollectionMethodCanBeUsed")
+    private void reproduceAllInCell(Cell ignoredCell, List<Entity> cellVisitors) {
         int offspring = 0;
         for (Entity entity : cellVisitors) {
             if (entity instanceof Animal animal) {
@@ -47,15 +48,17 @@ public class ReproduceSystem extends AbstractSystem {
         cellVisitors.forEach(entity -> entity.setParent(false));
     }
 
+    @SuppressWarnings("SequencedCollectionMethodCanBeUsed")
     private void born(Entity entity, List<Entity> cellVisitors, int offspring) {
         resetFlag(cellVisitors);
         int maxQuantity = entity.getMaxQuantity();
         EntityType type = EntityType.valueOf(cellVisitors.get(0).getClass());
-        for (int i = 0; i < offspring && cellVisitors.size() < maxQuantity; i++) {
-            cellVisitors.add(EntityFactory.newEntity(type));
-        }
+        IntStream.iterate(0, i -> i < offspring && cellVisitors.size() < maxQuantity, i -> i + 1)
+                .mapToObj(i -> EntityFactory.newEntity(type))
+                .forEach(cellVisitors::add);
     }
 
+    @SuppressWarnings("SequencedCollectionMethodCanBeUsed")
     private Entity findCouple(List<Entity> cellVisitors) {
         for (Entity entity : cellVisitors) {
             if (cellVisitors.size() >= cellVisitors.get(0).getMaxQuantity()) {

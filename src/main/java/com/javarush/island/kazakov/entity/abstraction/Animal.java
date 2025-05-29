@@ -4,7 +4,6 @@ import com.javarush.island.kazakov.component.Eating;
 import com.javarush.island.kazakov.component.Movable;
 import com.javarush.island.kazakov.component.Reproducible;
 import com.javarush.island.kazakov.config.Config;
-import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.map.Cell;
 import lombok.Getter;
 
@@ -52,6 +51,7 @@ public abstract class Animal extends Entity implements Movable, Eating, Reproduc
         }
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean desireToBeNaughty() {
         return saturation - quarterOfSaturation <= currentSaturation;
     }

@@ -11,6 +11,7 @@ import com.javarush.island.kazakov.util.Rnd;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class EatSystem extends AbstractSystem {
 
@@ -35,10 +36,9 @@ public class EatSystem extends AbstractSystem {
     }
 
     private void eat(Cell cell) {
-        List<Entity> allEntities = new ArrayList<>();
-        for (Map.Entry<Class<? extends Entity>, List<Entity>> entry : cell.getVisitors().entrySet()) {
-            allEntities.addAll(entry.getValue());
-        }
+        List<Entity> allEntities = cell.getVisitors().entrySet().stream()
+                .flatMap(entry -> entry.getValue().stream())
+                .collect(Collectors.toList());
         int size = allEntities.size();
         for (int i = 0; i < size; ) {
             Entity eater = allEntities.get(i);
@@ -60,8 +60,7 @@ public class EatSystem extends AbstractSystem {
 
     private Entity findVictim(Animal eater, List<Entity> cellVisitors) {
         if (!eater.isHungry()) return null;
-        for (int i = 0; i < cellVisitors.size(); i++) {
-            Entity pray = cellVisitors.get(i);
+        for (Entity pray : cellVisitors) {
             int probability = EatingProbability.getProbability(eater, pray);
             if (Rnd.get(probability)) {
                 return pray;

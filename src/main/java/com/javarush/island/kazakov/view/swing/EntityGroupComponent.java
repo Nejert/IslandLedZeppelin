@@ -1,34 +1,29 @@
 package com.javarush.island.kazakov.view.swing;
 
-import com.javarush.island.kazakov.config.Config;
-
 import javax.swing.*;
 import java.awt.*;
 
 public class EntityGroupComponent extends JComponent {
-    private final int capacity;
 
-    public EntityGroupComponent(int capacity, boolean debug) {
-        this.capacity = capacity;
+    public EntityGroupComponent(boolean debug) {
         if (debug) {
             this.setBorder(BorderFactory.createStrokeBorder(new BasicStroke(1), Color.GREEN));
         }
         this.setLayout(new EntityGroupLayout());
     }
 
+    @SuppressWarnings("unused")
     public EntityGroupComponent() {
-        this(Config.get().getEntityGroupCapacity(), false);
+        this(false);
     }
 
     private class EntityGroupLayout implements LayoutManager {
         @Override
         public void addLayoutComponent(String name, Component comp) {
-
         }
 
         @Override
         public void removeLayoutComponent(Component comp) {
-
         }
 
         @Override
@@ -85,7 +80,6 @@ public class EntityGroupComponent extends JComponent {
                     }
                 }
             }
-
         }
     }
 }

@@ -31,6 +31,7 @@ public class Rnd {
         else return com.javarush.island.khmelov.util.Rnd.random(min, max);
     }
 
+    @SuppressWarnings("unused")
     public static double random(double min, double max) {
         if (DEBUG) return random.nextDouble(min, max);
         else return com.javarush.island.khmelov.util.Rnd.random(min, max);

@@ -10,7 +10,7 @@ public class EntityComponent extends JComponent {
     @Getter
     private final Entity entity;
     private final ImageIcon icon;
-    private int quantity;
+    private final int quantity;
     private final boolean debug;
     private final float imageFontRatio;
     private final Dimension iconSize;

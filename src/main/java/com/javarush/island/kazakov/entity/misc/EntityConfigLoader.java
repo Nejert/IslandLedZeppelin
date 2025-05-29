@@ -24,7 +24,7 @@ public class EntityConfigLoader {
     public static Map<EntityType, Entity> loadPrototypes(String path) {
         Map<EntityType, Entity> entities = new HashMap<>();
         ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonEntityNode = null;
+        JsonNode jsonEntityNode;
         try {
             jsonEntityNode = objectMapper.readTree(EntityConfigLoader.class.getResource(path));
         } catch (IOException e) {
@@ -38,7 +38,7 @@ public class EntityConfigLoader {
             if (entityClass.isAnnotationPresent(Metric.class)) {
                 Metric metric = entityClass.getAnnotation(Metric.class);
                 Constructor<?> constructor = entityClass.getConstructors()[0];
-                Entity entity = null;
+                Entity entity;
 
                 JsonNode jsonWeight = jsonEntity.get("weight");
                 JsonNode jsonMaxQuantity = jsonEntity.get("maxQuantity");

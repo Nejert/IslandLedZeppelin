@@ -1,7 +1,6 @@
 package com.javarush.island.kazakov;
 
 import com.javarush.island.kazakov.config.Config;
-import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.map.GameMap;
 import com.javarush.island.kazakov.system.AbstractSystem;
 import com.javarush.island.kazakov.view.View;

@@ -1,6 +1,5 @@
 package com.javarush.island.kazakov.system;
 
-import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
 import com.javarush.island.kazakov.map.Cell;
 import com.javarush.island.kazakov.map.GameMap;
@@ -22,14 +21,14 @@ public abstract class AbstractSystem {
         for (int y = 0; y < gameMap.getRows(); y++) {
             for (int x = 0; x < gameMap.getCols(); x++) {
                 Cell cell = gameMap.getCell(y, x);
-                for (Map.Entry<Class<? extends Entity>, List<Entity>> entry : cell.getVisitors().entrySet()) {
+                cell.getVisitors().entrySet().forEach(entry -> {
                     cell.lock();
                     try {
                         action.accept(cell, entry.getValue());
                     } finally {
                         cell.unlock();
                     }
-                }
+                });
             }
         }
     }

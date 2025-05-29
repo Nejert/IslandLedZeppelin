@@ -1,7 +1,6 @@
 package com.javarush.island.kazakov.entity.misc;
 
 import com.javarush.island.kazakov.config.Config;
-import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
 
 import java.util.Map;

@@ -1,6 +1,5 @@
 package com.javarush.island.kazakov.view.console;
 
-import com.javarush.island.kazakov.config.Default;
 import com.javarush.island.kazakov.entity.abstraction.Entity;
 import com.javarush.island.kazakov.util.Util;
 import com.javarush.island.kazakov.map.GameMap;
@@ -8,6 +7,7 @@ import com.javarush.island.kazakov.view.View;
 import javafx.util.Pair;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ConsoleView implements View {
     private final GameMap gameMap;
@@ -29,14 +29,10 @@ public class ConsoleView implements View {
     }
 
     public String displayStats() {
-        StringBuilder sb = new StringBuilder();
-        for (Map.Entry<Class<? extends Entity>, Pair<String, Integer>> entry : Util.gatherMapInfo(gameMap).entrySet()) {
-            sb.append(entry.getValue().getKey())
-                    .append(":\t")
-                    .append(entry.getValue().getValue())
-                    .append("\n");
-        }
-        return sb.toString();
+        String s = Util.gatherMapInfo(gameMap).values().stream()
+                .map(stringIntegerPair -> stringIntegerPair.getKey() + ":\t" + stringIntegerPair.getValue() + "\n")
+                .collect(Collectors.joining());
+        return s;
     }
 
     @Override

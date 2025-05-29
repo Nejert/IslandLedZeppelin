@@ -1,3 +1,78 @@
+# JRU Animal Island Led Zeppelin
+### Completed tasks:
+- Animal hierarchy (OOP) (at least 10 herbivores and 5 carnivores species created).
+- Animal behavior (`eat()`, `reproduce()`, `move()`).
+- Multithreading.
+- State statistics of the island at each tick (in the console).
+- Bring parameters to one place for convenience of manage the simulation.
+- Swing graphics.
+### Animal capabilities:
+- Eat plants or other animals if suitable food in the location occurred. Decision based on animal eating probability table (see `EatingProbability`).
+- Move to neighboring cells. Have an ability to move to the initial location, returning to the initial location is not prohibited. (see `MoveSystem`)
+- Reproduce if a pair in their location occurred. Probability of having offspring is determined as a percentage (see `ReproduceSystem`, `Config#birthProbability`)
+- Die either from starvation or be eaten (see `EatSystem`, `EatSystem#killStarvingAnimals`).
+### Configuration:
+Application is controlled by three configuration files.
+
+    config.xml
+    entityConfig.json
+    initialSpawnProbabilityConfig.yaml
+
+This is done for educational purposes, to touch each of the serialization technologies described in the lecture. All properties are optional.
+___
+#### `config.xml` - common configuration of application.
+**Properties:**
+>`rows` - number of cell rows.\
+`cols` - number of cell columns.\
+`animalMovesCount` - number of ticks during which an animal can move without being fed.\
+`birthProbability` - percentage of successful birth.\
+`tickPeriodMs` - period in milliseconds during which playing field is updated.\
+`width` - width of the swing view window.\
+`height` - height of the swing view window.\
+`gridStrokeWidth` - width of the line separating each cell.\
+`statWidthPercentage` - width of the statistics pane in percent.\
+`entityGroupCapacity` - capacity of the group of entities located in each cell. Once the maximum is reached, a new group is added to which new entities are placed for display.\
+`backgroundColor` - background color in hexadecimal format e.g `#XXXXXX`.\
+`gridLinesColor` - color of the lines separating each cell in hexadecimal format e.g `#XXXXXX`.\
+`windowTitle` -  title of the application window.\
+`spawnConfig` - relative path to initial spawn probability config.\
+`entityConfig` - relative path to entities config.
+___
+#### `entityConfig.json` - allows to configure each entity (animals, plants).
+**Properties:**
+>`weight` - entity weight.\
+`maxQuantity` - maximum number entities of this type in one cell.\
+`maxSteps` - animal movement speed. No more than steps per move.\
+`saturation` - number of food kilograms does an animal need to be fully saturated.\
+`icon` - textual representation of the entity emoji.\
+`imageIcon` - relative path to the entity image.
+___
+#### `initialSpawnProbabilityConfig.yaml` - configuration responsible for the initial allocation of entities on the map in percent.
+___
+### Build:
+```
+mvn clean compile assembly:single
+```
+
+### Run:
+Windows Terminal (cmd):
+```
+chcp 65001
+cd target/
+java -jar Island.jar
+```
+PowerShell:
+```
+[Console]::InputEncoding = [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+cd target/
+java -jar Island.jar
+```
+Other:
+```
+cd target/
+java -jar Island.jar
+```
+___
 <h1>Остров животных</h1>
 
 _(пример для группы LedZeppelin)_
